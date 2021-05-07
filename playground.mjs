@@ -45,7 +45,6 @@ function showNextPrompt() {
     }
 
     const {method, args} = parse(command);
-    console.log(args)
 
     if (!method) {
       console.log(`Invalid command. Valid commands are:\n${validCommands}`);
