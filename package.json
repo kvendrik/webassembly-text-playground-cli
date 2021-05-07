@@ -1,0 +1,17 @@
+{
+  "name": "webassembly-text-playground-cli",
+  "version": "1.0.0",
+  "description": "A CLI to play around with and learn how to write the WebAssembly text format",
+  "main": "playground.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Koen Vendrik <k.vendrik@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "wabt": "^1.0.23"
+  },
+  "engines": {
+    "node": ">13"
+  }
+}
