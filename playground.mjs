@@ -3,9 +3,9 @@ import {dirname, resolve} from 'path';
 import wabt from "wabt";
 import readline from 'readline';
 
-const moduleFlagIndex = process.argv.findIndex((arg) => arg === '-m');
-const importsPath = moduleFlagIndex === -1 ? null : process.argv[moduleFlagIndex + 1];
-const [,, pathToWatFile, execFilePath] = process.argv.filter((arg) => arg !== importsPath && arg !== '-i' && arg !== '-m');
+const importsFlagIndex = process.argv.findIndex((arg) => arg === '-m');
+const importsPath = importsFlagIndex === -1 ? null : process.argv[importsFlagIndex + 1];
+const [,, pathToWatFile, execFilePath] = process.argv.filter((arg) => arg !== importsPath && arg !== '-m');
 
 if (!pathToWatFile) {
   console.log('Usage: node playground.mjs <pathToWatFile> [<pathToExecJsFile>] [-m <pathToImportsFile>]');
