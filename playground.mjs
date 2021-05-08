@@ -1,16 +1,24 @@
 import {readFileSync, writeFileSync, existsSync, unlinkSync} from "fs";
+import {dirname, resolve} from 'path';
 import wabt from "wabt";
 import readline from 'readline';
 
-const pathToWatFile = process.argv[2];
+const moduleFlagIndex = process.argv.findIndex((arg) => arg === '-m');
+const importsPath = moduleFlagIndex === -1 ? null : process.argv[moduleFlagIndex + 1];
+const [,, pathToWatFile, execFilePath] = process.argv.filter((arg) => arg !== importsPath && arg !== '-i' && arg !== '-m');
 
 if (!pathToWatFile) {
-  console.log('Usage: node compile.mjs <pathToWatFile>');
+  console.log('Usage: node playground.mjs <pathToWatFile> [<pathToExecJsFile>] [-m <pathToImportsFile>]');
   process.exit();
 }
 
 if (!existsSync(pathToWatFile)) {
   console.log(`File ${pathToWatFile} does not exist.`);
+  process.exit();
+}
+
+if (importsPath && !existsSync(importsPath)) {
+  console.log(`File ${importsPath} does not exist.`);
   process.exit();
 }
 
@@ -20,6 +28,18 @@ const rl = readline.createInterface({
 });
 
 const wasmExports = await getWatExports();
+
+if (execFilePath) {
+  if (!existsSync(execFilePath)) {
+    throw new Error(`${execFilePath} does not exist.`);
+  }
+
+  const imports = await import(resolve(dirname('./'), execFilePath));
+  await imports.default(wasmExports);
+
+  process.exit();
+}
+
 const validCommands = `
 - list (list all exported methods)
 - exit (exit program)
@@ -37,6 +57,7 @@ function showNextPrompt() {
   rl.question("> ", (command) => {
     if (command === 'list') {
       console.log(Object.keys(wasmExports));
+      showNextPrompt();
       return;
     }
 
@@ -75,7 +96,11 @@ async function getWatExports() {
 
   const wasmBuffer = readFileSync(outputWasmFilePath);
   const webModule = await WebAssembly.compile(wasmBuffer);
-  const {exports: wasmExports} = await WebAssembly.instantiate(webModule);
+
+  const imports = importsPath ? await import(resolve(dirname('./'), importsPath)) : null;
+  const {exports: wasmExports} = await WebAssembly.instantiate(webModule, {
+    imports: imports ? imports.default : undefined,
+  });
 
   unlinkSync(outputWasmFilePath);
 

@@ -6,7 +6,16 @@ A CLI to play around with and learn how to write the [WebAssembly text format](h
 
 Install dependencies by running `yarn` and switch your Node version to `v13` or later.
 
-## Example usage
+## Usage examples
+
+### Using a JS file:
+
+```
+node playground.mjs examples/simple/simple.wat examples/simple/simple.mjs
+42
+```
+
+### Interactive mode
 
 ```
 node playground.mjs examples/add-two.wat
@@ -19,4 +28,20 @@ Initialized with examples/add-two.wat. Use one of the following commands:
 
 > addTwo(2, 5)
 7
+```
+
+### Using imports
+
+```
+node playground.mjs examples/simple/simple.wat -m examples/simple/imports.mjs
+
+Initialized with examples/simple/simple.wat. Use one of the following commands:
+
+- list (list all exported methods)
+- exit (exit program)
+- Or calling one of your exported methods: logValue
+
+> logValue()
+42
+undefined
 ```
