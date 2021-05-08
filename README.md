@@ -8,7 +8,7 @@ Install dependencies by running `yarn` and switch your Node version to `v13` or 
 
 ## Usage examples
 
-### Using a JS file:
+### Using a JS file
 
 ```
 node playground.mjs examples/simple/simple.wat examples/simple/simple.mjs
