@@ -8,6 +8,13 @@ Install dependencies by running `yarn` and switch your Node version to `v13` or 
 
 ## Usage examples
 
+### Print help message
+
+```
+node playground.mjs -h
+Usage: node playground.mjs <pathToWatFile> [<pathToExecJsFile>] [-m <pathToImportsFile>] [-c <execCommand>]
+```
+
 ### Using a JS file
 
 ```
@@ -28,6 +35,14 @@ Initialized with examples/add-two.wat. Use one of the following commands:
 
 > addTwo(2, 5)
 7
+```
+
+### Executing a command directly
+
+```
+node playground.mjs examples/add-two.wat -c "addTwo(2, 2)"
+
+4
 ```
 
 ### Using imports

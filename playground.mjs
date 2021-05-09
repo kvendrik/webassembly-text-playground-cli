@@ -3,12 +3,19 @@ import {dirname, resolve} from 'path';
 import wabt from "wabt";
 import readline from 'readline';
 
-const importsFlagIndex = process.argv.findIndex((arg) => arg === '-m');
-const importsPath = importsFlagIndex === -1 ? null : process.argv[importsFlagIndex + 1];
-const [,, pathToWatFile, execFilePath] = process.argv.filter((arg) => arg !== importsPath && arg !== '-m');
+const importsPath = getFlagValue('-m');
+const execCommand = getFlagValue('-c');
+const showHelp = process.argv.some((arg) => arg === '-h');
+const excludeFromArgs = [
+  '-m',
+  importsPath,
+  '-c',
+  execCommand,
+];
+const [,, pathToWatFile, execFilePath] = process.argv.filter((arg) => !excludeFromArgs.includes(arg));
 
-if (!pathToWatFile) {
-  console.log('Usage: node playground.mjs <pathToWatFile> [<pathToExecJsFile>] [-m <pathToImportsFile>]');
+if (showHelp || !pathToWatFile) {
+  console.log('Usage: node playground.mjs <pathToWatFile> [<pathToExecJsFile>] [-m <pathToImportsFile>] [-c <execCommand>]');
   process.exit();
 }
 
@@ -40,6 +47,11 @@ if (execFilePath) {
   process.exit();
 }
 
+if (execCommand) {
+  runCommand(execCommand);
+  process.exit();
+}
+
 const validCommands = `
 - list (list all exported methods)
 - exit (exit program)
@@ -65,24 +77,25 @@ function showNextPrompt() {
       process.exit();
     }
 
-    const {method, args} = parse(command);
-
-    if (!method) {
-      console.log(`Invalid command. Valid commands are:\n${validCommands}`);
-      showNextPrompt();
-      return;
-    }
-
-    if (!Object.keys(wasmExports).includes(method)) {
-      console.log(`Method ${method} is not exported by WAT file.`);
-      showNextPrompt();
-      return;
-    }
-
-    console.log(wasmExports[method](...args));
-
+    runCommand(command);
     showNextPrompt();
   });
+}
+
+function runCommand(command) {
+  const {method, args} = parse(command);
+
+  if (!method) {
+    console.log(`Invalid command. Valid commands are:\n${validCommands}`);
+    return;
+  }
+
+  if (!Object.keys(wasmExports).includes(method)) {
+    console.log(`Method ${method} is not exported by WAT file.`);
+    return;
+  }
+
+  console.log(wasmExports[method](...args));
 }
 
 async function getWatExports() {
@@ -139,4 +152,9 @@ function parse(input) {
       type === 'number' ? Number(value) : value.trim(),
     ),
   };
+}
+
+function getFlagValue(flag) {
+  const flagIndex = process.argv.findIndex((arg) => arg === flag);
+  return flagIndex === -1 ? null : process.argv[flagIndex + 1];
 }
