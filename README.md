@@ -33,7 +33,7 @@ Initialized with examples/add-two.wat. Use one of the following commands:
 ### Using imports
 
 ```
-node playground.mjs examples/simple/simple.wat -m examples/simple/imports.mjs
+node playground.mjs examples/simple/simple.wat -m examples/log.imports.mjs
 
 Initialized with examples/simple/simple.wat. Use one of the following commands:
 

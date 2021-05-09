@@ -98,9 +98,7 @@ async function getWatExports() {
   const webModule = await WebAssembly.compile(wasmBuffer);
 
   const imports = importsPath ? await import(resolve(dirname('./'), importsPath)) : null;
-  const {exports: wasmExports} = await WebAssembly.instantiate(webModule, {
-    imports: imports ? imports.default : undefined,
-  });
+  const {exports: wasmExports} = await WebAssembly.instantiate(webModule, imports ? imports.default : undefined);
 
   unlinkSync(outputWasmFilePath);
 
