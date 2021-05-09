@@ -41,7 +41,6 @@ Initialized with examples/add-two.wat. Use one of the following commands:
 
 ```
 node playground.mjs examples/add-two.wat -c "addTwo(2, 2)"
-
 4
 ```
 
