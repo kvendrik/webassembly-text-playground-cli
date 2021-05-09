@@ -48,7 +48,14 @@ if (execFilePath) {
 }
 
 if (execCommand) {
-  runCommand(execCommand);
+  runCommand(
+    execCommand,
+    `Invalid command. Exported methods are: ${
+      wasmExports.length === 0 ?
+        'no exported methods found' :
+        Object.keys(wasmExports).join(',')
+      }`,
+  );
   process.exit();
 }
 
@@ -57,7 +64,7 @@ const validCommands = `
 - exit (exit program)
 - Or calling one of your exported methods: ${
     wasmExports.length === 0 ?
-      'no exported method found' :
+      'no exported methods found' :
       Object.keys(wasmExports).join(',')
     }
 `;
@@ -77,16 +84,19 @@ function showNextPrompt() {
       process.exit();
     }
 
-    runCommand(command);
+    runCommand(
+      command,
+      `Invalid command. Valid commands are:\n${validCommands}`,
+    );
     showNextPrompt();
   });
 }
 
-function runCommand(command) {
+function runCommand(command, invalidMethodMessage) {
   const {method, args} = parse(command);
 
   if (!method) {
-    console.log(`Invalid command. Valid commands are:\n${validCommands}`);
+    console.log(invalidMethodMessage);
     return;
   }
 
